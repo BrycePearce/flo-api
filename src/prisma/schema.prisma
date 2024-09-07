@@ -32,6 +32,8 @@ model FLOEntity {
   op_region      String   @db.VarChar(100)
   op_subregion   String?  @db.VarChar(100)
   search_score   Float?
+  createdAt      DateTime @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime @updatedAt @db.Timestamp(6)
 
   @@index([op_name], map: "idx_op_name")
   @@index([op_region], map: "idx_op_region")
@@ -41,4 +43,5 @@ model FLOEntity {
   @@index([lic_status], map: "idx_lic_status")
   @@index([cert_status], map: "idx_cert_status")
   @@index([op_country], map: "idx_op_countryCode")
+  @@index([search_score], map: "idx_search_score")
 }
