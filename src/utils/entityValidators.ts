@@ -26,11 +26,11 @@ export const floEntityQuerySchema = z.object({
     limit: z
         .string()
         .optional()
-        .transform((val) => (val !== undefined ? parseInt(val, 10) : 25)) // Convert to number and apply default
-        .refine((val) => val > 0, { message: "Limit must be a positive number" }), // Validate limit
+        .transform((val) => (val !== undefined ? parseInt(val, 10) : 25)) // Convert to number so we can refine the error message around it being an integer
+        .refine((val) => val > 0, { message: "Limit must be a positive number" }),
     offset: z
         .string()
         .optional()
-        .transform((val) => (val !== undefined ? parseInt(val, 10) : 0)) // Convert to number and apply default
-        .refine((val) => val >= 0, { message: "Offset must be a non-negative number" }), // Validate offset
+        .transform((val) => (val !== undefined ? parseInt(val, 10) : 0)) // Convert to number so we can refine the error message around it being an integer
+        .refine((val) => val >= 0, { message: "Offset must be a non-negative number" }),
 });
