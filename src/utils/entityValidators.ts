@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // schema for query params
-export const floEntityQuerySchema = z.object({
+export const floEntityQuerySchema = z.strictObject({
     cert_status: z
         .string()
         .optional()

@@ -1,20 +1,18 @@
 import prisma from '../prisma/prismaClient';
 import { Router, Request, Response } from 'express';
 import { buildFloEntityFilters } from '../utils/filterUtils';
-import { floEntityQuerySchema } from '../utils/entityValidators';
 import { parsePagination } from '../utils/paginationUtils';
+import { queryParamValidator } from '../middleware/queryParamValidator';
+import { fetchEntitiesRoute } from '../constants/routeConstants';
 
 const router = Router();
 
+// validation middleware
+router.use(fetchEntitiesRoute, queryParamValidator);
+
 // GET route to search for FLO entities
-router.get('/entities', async (req: Request, res: Response) => {
+router.get(fetchEntitiesRoute, async (req: Request, res: Response, next) => {
     try {
-        const parsedQuery = floEntityQuerySchema.safeParse(req.query);
-
-        if (!parsedQuery.success) {
-            return res.status(400).json({ error: 'Invalid query parameters', details: parsedQuery.error.errors });
-        }
-
         const { limit, offset } = req.query;
         const { limit: parsedLimit, offset: parsedOffset } = parsePagination(limit as string, offset as string);
 
@@ -39,8 +37,8 @@ router.get('/entities', async (req: Request, res: Response) => {
             offset: parsedOffset
         });
     } catch (error) {
-        console.error('Error fetching entities:', error);
-        res.status(500).json({ error: 'Failed to fetch entities' });
+        // bubble the error up
+        next(error);
     }
 });
 

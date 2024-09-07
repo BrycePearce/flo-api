@@ -1,11 +1,11 @@
 import express from 'express';
-import floUpdateRoutes from './routes/floUpdateRoutes';
 import floGetRoutes from './routes/floGetRoutes';
+import floUpdateRoutes from './routes/floUpdateRoutes';
 import { errorHandler } from './middleware/errorHandler';
+import { routePrefix } from './constants/routeConstants';
 
 const app = express();
 const port = process.env.PORT || 3000;
-const routePrefix = "/api/v1/flo";
 
 app.use(express.json());
 

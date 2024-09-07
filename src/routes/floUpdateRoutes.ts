@@ -1,11 +1,12 @@
+import { updateEntitesRoute } from '../constants/routeConstants';
+import prisma from "../prisma/prismaClient";
 import { Router } from 'express';
 import type { FLOEntity } from '@prisma/client';
-import prisma from "../prisma/prismaClient";
 
 const router = Router();
 
 // accepts a list of floEntities and inserts them into the database
-router.post('/insert-entities', async (req, res) => {
+router.post(updateEntitesRoute, async (req, res) => {
     const entities: FLOEntity[] = req.body as FLOEntity[];
     try {
         // upsert will update entities with differences, or insert them if they do not exist
