@@ -11,4 +11,4 @@ RUN npx prisma generate --schema=src/prisma/schema.prisma
 
 EXPOSE 3000
 
-CMD ["npx", "ts-node", "src/app.ts"]
+CMD npx prisma migrate deploy --schema=src/prisma/schema.prisma && npx ts-node src/app.ts
