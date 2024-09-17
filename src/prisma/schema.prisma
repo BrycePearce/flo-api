@@ -15,22 +15,22 @@ datasource db {
 }
 
 model FLOEntity {
-  cert_body      String   @db.VarChar(150)
+  cert_body      String   @db.VarChar(300)
   cert_product   String[]
   cert_standard  String[]
-  cert_status    String   @db.VarChar(50)
+  cert_status    String   @db.VarChar(100)
   lic_body       String   @db.VarChar(300)
-  lic_status     String   @db.VarChar(50)
+  lic_status     String   @db.VarChar(100)
   op_address     String?  @db.VarChar(500)
   op_altname     String?  @db.VarChar(300)
   op_country     String   @db.VarChar(100)
-  op_countryCode String   @db.VarChar(3)
+  op_countryCode String   @db.VarChar(50)
   op_floId       Int      @id @unique // PK
   op_isCertified Boolean  @db.Boolean
   op_key         String   @db.VarChar(100)
   op_name        String   @db.VarChar(400)
-  op_region      String   @db.VarChar(200)
-  op_subregion   String?  @db.VarChar(200)
+  op_region      String   @db.VarChar(300)
+  op_subregion   String?  @db.VarChar(300)
   search_score   Float?
   createdAt      DateTime @default(now()) @db.Timestamp(6)
   updatedAt      DateTime @updatedAt @db.Timestamp(6)
