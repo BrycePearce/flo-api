@@ -1,6 +1,6 @@
 import { z } from 'zod';
+import { FLO_REQUEST_LIMIT } from '../constants/limits';
 
-// schema for query params
 export const floEntityQuerySchema = z.strictObject({
     cert_status: z
         .string()
@@ -26,11 +26,14 @@ export const floEntityQuerySchema = z.strictObject({
     limit: z
         .string()
         .optional()
-        .transform((val) => (val !== undefined ? parseInt(val, 10) : 25)) // Convert to number so we can refine the error message around it being an integer
-        .refine((val) => val > 0, { message: "Limit must be a positive number" }),
+        .transform((val) => (val !== undefined ? parseInt(val, 10) : 25))
+        .refine(
+            (val) => val > 0 && val <= FLO_REQUEST_LIMIT,
+            { message: `Limit must be a positive number less than or equal to ${FLO_REQUEST_LIMIT}` }
+        ),
     offset: z
         .string()
         .optional()
-        .transform((val) => (val !== undefined ? parseInt(val, 10) : 0)) // Convert to number so we can refine the error message around it being an integer
+        .transform((val) => (val !== undefined ? parseInt(val, 10) : 0))
         .refine((val) => val >= 0, { message: "Offset must be a non-negative number" }),
 });
