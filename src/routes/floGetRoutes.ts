@@ -2,16 +2,14 @@ import prisma from '../prisma/prismaClient';
 import { Router, Request, Response } from 'express';
 import { buildFloEntityFilters } from '../utils/filterUtils';
 import { parsePagination } from '../utils/paginationUtils';
-import { queryParamValidator } from '../middleware/queryParamValidator';
+import { fetchEntitiesValidator, fetchEntityValidator } from '../middleware/queryParamValidator';
 import { fetchEntitiesRoute } from '../constants/routeConstants';
 
 const router = Router();
 
-// validation middleware
-router.use(fetchEntitiesRoute, queryParamValidator);
 
-// GET route to search for FLO entities
-router.get(fetchEntitiesRoute, async (req: Request, res: Response, next) => {
+// Find matching FLO entities
+router.get(fetchEntitiesRoute, fetchEntitiesValidator, async (req: Request, res: Response, next) => {
     try {
         const { limit, offset } = req.query;
         const { limit: parsedLimit, offset: parsedOffset } = parsePagination(limit as string, offset as string);
@@ -38,6 +36,25 @@ router.get(fetchEntitiesRoute, async (req: Request, res: Response, next) => {
         });
     } catch (error) {
         // bubble the error up
+        next(error);
+    }
+});
+
+// find a single entity
+router.get(`${fetchEntitiesRoute}/:floId`, fetchEntityValidator, async (req: Request, res: Response, next) => {
+    try {
+        const floId = parseInt(req.params?.floId, 10);
+
+        const entity = await prisma.fLOEntity.findUnique({
+            where: { op_floId: floId },
+        });
+
+        if (entity) {
+            res.status(200).json(entity);
+        } else {
+            res.status(404).json({ message: 'Invalid FLO id' });
+        }
+    } catch (error) {
         next(error);
     }
 });

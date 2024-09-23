@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FLO_REQUEST_LIMIT } from '../constants/limits';
+import { FLO_REQUEST_LIMIT, MAX_FLO_ID, MIN_FLO_ID } from '../constants/limits';
 
 export const floEntityQuerySchema = z.strictObject({
     cert_status: z
@@ -36,4 +36,17 @@ export const floEntityQuerySchema = z.strictObject({
         .optional()
         .transform((val) => (val !== undefined ? parseInt(val, 10) : 0))
         .refine((val) => val >= 0, { message: "Offset must be a non-negative number" }),
+});
+
+
+export const floIdQuerySchema = z.strictObject({
+    floId: z
+        .string()
+        .regex(/^\d+$/, { message: 'floId must be a positive integer' })
+        .refine((floIdStr) => {
+            // Check if the floid is within the valid range
+            if (floIdStr.length > 10) return false; // More than 10 digits is too large
+            const parsedFloId = Number(floIdStr);
+            return parsedFloId >= MIN_FLO_ID && parsedFloId <= MAX_FLO_ID;
+        }, { message: `floId must be between ${MIN_FLO_ID} and ${MAX_FLO_ID}` }),
 });
