@@ -1,36 +1,37 @@
-type ErrorDetail = {
+export type ErrorDetail = {
     code: string;
     message: string;
     path: (string | number)[];
     keys?: string[];
 }
 
-
-export class InvalidQueryParamsError extends Error {
+export class ApiError extends Error {
     public status: number;
-    public details: ErrorDetail[];
+    public code: string;
+    public details?: ErrorDetail[];
 
-    constructor(details: ErrorDetail[]) {
-        super('Invalid query parameters');
-        this.status = 400;
+    constructor(status: number, code: string, message: string, details?: ErrorDetail[]) {
+        super(message);
+        this.name = 'ApiError';
+        this.status = status;
+        this.code = code;
         this.details = details;
     }
 }
-
-export class NotFoundError extends Error {
-    public status: number;
-
-    constructor(resource: string) {
-        super(`${resource} not found`);
-        this.status = 404;
+export class InvalidQueryParamsError extends ApiError {
+    constructor(details: ErrorDetail[]) {
+        super(400, 'INVALID_QUERY_PARAMETERS', 'Invalid query parameters', details);
     }
 }
 
-export class UnauthorizedError extends Error {
-    public status: number;
+export class NotFoundError extends ApiError {
+    constructor(resource: string, details?: ErrorDetail[]) {
+        super(404, 'NOT_FOUND', `${resource} not found`, details);
+    }
+}
 
+export class UnauthorizedError extends ApiError {
     constructor() {
-        super('Unauthorized access');
-        this.status = 401;
+        super(401, 'UNAUTHORIZED', 'Unauthorized access');
     }
 }

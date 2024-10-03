@@ -4,6 +4,7 @@ import { buildFloEntityFilters } from '../utils/filterUtils';
 import { parsePagination } from '../utils/paginationUtils';
 import { fetchEntitiesValidator, fetchEntityValidator } from '../middleware/queryParamValidator';
 import { fetchEntitiesRoute } from '../constants/routeConstants';
+import { NotFoundError } from '../types/Errors';
 
 const router = Router();
 
@@ -52,7 +53,7 @@ router.get(`${fetchEntitiesRoute}/:floId`, fetchEntityValidator, async (req: Req
         if (entity) {
             res.status(200).json(entity);
         } else {
-            res.status(404).json({ message: 'Invalid FLO id' });
+            next(new NotFoundError('FLO entity'));
         }
     } catch (error) {
         next(error);
