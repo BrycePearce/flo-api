@@ -8,7 +8,6 @@ import { parsePagination } from '../utils/paginationUtils';
 
 const router = Router();
 
-
 // Find matching FLO entities
 router.get(fetchEntitiesRoute, fetchEntitiesValidator, async (req: Request, res: Response, next) => {
     try {
