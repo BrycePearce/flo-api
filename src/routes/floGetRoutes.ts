@@ -1,10 +1,10 @@
 import prisma from '../prisma/prismaClient';
+import { NotFoundError } from '../types/Errors';
 import { Router, Request, Response } from 'express';
 import { buildFloEntityFilters } from '../utils/filterUtils';
-import { parsePagination } from '../utils/paginationUtils';
-import { fetchEntitiesValidator, fetchEntityValidator } from '../middleware/queryParamValidator';
 import { fetchEntitiesRoute } from '../constants/routeConstants';
-import { NotFoundError } from '../types/Errors';
+import { fetchEntitiesValidator, fetchEntityValidator } from '../middleware/queryParamValidator';
+import { parsePagination } from '../utils/paginationUtils';
 
 const router = Router();
 
