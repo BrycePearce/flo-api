@@ -62,54 +62,69 @@ router.get(`${fetchEntitiesRoute}/:floId`, fetchEntityValidator, async (req: Req
 
 router.get(fetchStatsRoute, async (_req: Request, res: Response, next) => {
     try {
-        // Total number of entities
-        const totalEntities = await prisma.fLOEntity.count();
+        const totalEntitiesPromise = prisma.fLOEntity.count();
 
-        // // Number of certified entities
-        const certifiedEntities = await prisma.fLOEntity.count({
+        const certifiedEntitiesPromise = prisma.fLOEntity.count({
             where: { op_isCertified: true },
         });
 
-        // // Entities by country
-        const entitiesByCountry = await prisma.fLOEntity.groupBy({
+        const entitiesByCountryPromise = prisma.fLOEntity.groupBy({
             by: ['op_country'],
             _count: { op_floId: true },
             orderBy: { _count: { op_floId: 'desc' } },
         });
 
-        // // Entities by region
-        const entitiesByRegion = await prisma.fLOEntity.groupBy({
+        const entitiesByRegionPromise = prisma.fLOEntity.groupBy({
             by: ['op_region'],
             _count: { op_floId: true },
             orderBy: { _count: { op_floId: 'desc' } },
         });
 
-        // // Entities by certification status
-        const entitiesByCertStatus = await prisma.fLOEntity.groupBy({
+        const entitiesByCertStatusPromise = prisma.fLOEntity.groupBy({
             by: ['cert_status'],
             _count: { op_floId: true },
         });
 
-        // Entities by license status
-        const entitiesByLicStatus = await prisma.fLOEntity.groupBy({
+        const entitiesByLicStatusPromise = prisma.fLOEntity.groupBy({
             by: ['lic_status'],
             _count: { op_floId: true },
         });
 
-        // Top certified products
-        const topCertifiedProducts = await getTopCertifiedProducts();
+        const topCertifiedProductsPromise = getTopCertifiedProducts();
 
-        // Top certification standards
-        const topCertificationStandards = await getTopCertificationStandards();
+        const topCertificationStandardsPromise = getTopCertificationStandards();
 
-        // Recent additions in the last month
-        const totalAdditionsInTheLastMonth = await prisma.fLOEntity.count({
+        const lastMonth = new Date(new Date().setMonth(new Date().getMonth() - 1));
+        const totalAdditionsInTheLastMonthPromise = prisma.fLOEntity.count({
             where: {
                 createdAt: {
-                    gte: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+                    gte: lastMonth,
                 },
             },
         });
+
+        // Await all promises in parallel
+        const [
+            totalEntities,
+            certifiedEntities,
+            entitiesByCountry,
+            entitiesByRegion,
+            entitiesByCertStatus,
+            entitiesByLicStatus,
+            topCertifiedProducts,
+            topCertificationStandards,
+            totalAdditionsInTheLastMonth,
+        ] = await Promise.all([
+            totalEntitiesPromise,
+            certifiedEntitiesPromise,
+            entitiesByCountryPromise,
+            entitiesByRegionPromise,
+            entitiesByCertStatusPromise,
+            entitiesByLicStatusPromise,
+            topCertifiedProductsPromise,
+            topCertificationStandardsPromise,
+            totalAdditionsInTheLastMonthPromise,
+        ]);
 
         res.status(200).json({
             totalEntities,
@@ -126,5 +141,6 @@ router.get(fetchStatsRoute, async (_req: Request, res: Response, next) => {
         next(error);
     }
 });
+
 
 export default router;
