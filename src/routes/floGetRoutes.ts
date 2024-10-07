@@ -103,7 +103,6 @@ router.get(fetchStatsRoute, async (_req: Request, res: Response, next) => {
             },
         });
 
-        // Await all promises in parallel
         const [
             totalEntities,
             certifiedEntities,
